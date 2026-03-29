@@ -14,6 +14,7 @@ public class FeeManagementForm {
     private JPanel mainPanel;
     private JButton clearButton;
     private JButton deleteRecordButton;
+    private JLabel totalFeesLabel;
 
     public FeeManagementForm() {
         // Set up the table columns
@@ -38,6 +39,7 @@ public class FeeManagementForm {
             studentNameField.setText("");
             feeAmountField.setText("");
             dueDateField.setText("");
+            updateTotalFees(model);
         });
 
         // Delete Record button
@@ -48,6 +50,7 @@ public class FeeManagementForm {
                 return;
             }
             model.removeRow(row);
+            updateTotalFees(model);
         });
 
         // Clear button
@@ -81,6 +84,18 @@ public class FeeManagementForm {
 
             JOptionPane.showMessageDialog(null, report.toString());
         });
+    }
+
+    private void updateTotalFees(javax.swing.table.DefaultTableModel model) {
+        double total = 0.0;
+        for (int i = 0; i < model.getRowCount(); i++) {
+            try {
+                total += Double.parseDouble(model.getValueAt(i, 1).toString());
+            } catch (NumberFormatException ex) {
+                // skip non-numeric values
+            }
+        }
+        totalFeesLabel.setText("Total Fees: " + String.format("%.2f", total));
     }
 
     public static void main(String[] args) {
