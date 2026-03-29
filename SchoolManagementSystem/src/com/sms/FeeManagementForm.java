@@ -8,4 +8,5 @@ public class FeeManagementForm {
     private JTextField textField3;
     private JButton addRecordButton;
     private JTable table1;
+    private JComboBox comboBox1;
 }
