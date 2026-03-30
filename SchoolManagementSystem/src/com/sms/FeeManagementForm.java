@@ -46,7 +46,6 @@ public class FeeManagementForm {
         });
 
         // Set up the table columns
-
         String[] columns = {"Student Name", "Amount Due", "Amount Paid", "Due Date", "Balance/Change", "Status"};
         javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(columns, 0) {
             @Override
@@ -183,23 +182,54 @@ public class FeeManagementForm {
             studentNameField.setText("");
             feeAmountField.setText("");
             dueDateField.setText("");
+            amountPaidField.setText("");
         });
-
 
         // Generate Report button
         generateReportButton.addActionListener(e -> {
-            StringBuilder report = new StringBuilder("Fee Report:\n\n");
-            for (int i = 0; i < model.getRowCount(); i++) {
-                report.append("Name: ").append(model.getValueAt(i, 0)).append("\n")
-                        .append("Amount Due: ").append(model.getValueAt(i, 1)).append("\n")
-                        .append("Amount Paid: ").append(model.getValueAt(i, 2)).append("\n")
-                        .append("Due Date: ").append(model.getValueAt(i, 3)).append("\n")
-                        .append("Balance/Change: ").append(model.getValueAt(i, 4)).append("\n")
-                        .append("Status: ").append(model.getValueAt(i, 5)).append("\n")
-                        .append("----------------------------\n");
+            int selectedRow = feeTable.getSelectedRow();
+
+            if (selectedRow == -1) {
+                // Mode 1 — No row selected, show Full Summary Report
+                StringBuilder report = new StringBuilder("FEE SUMMARY REPORT\n");
+                report.append("==============================\n\n");
+
+                double totalFees = 0, totalCollected = 0, totalPending = 0;
+
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    double fee = Double.parseDouble(model.getValueAt(i, 1).toString());
+                    double paid = Double.parseDouble(model.getValueAt(i, 2).toString());
+
+                    totalFees += fee;
+                    totalCollected += Math.min(paid, fee);
+                    if (paid < fee) totalPending += (fee - paid);
+                }
+
+                report.append("Total Students:  ").append(model.getRowCount()).append("\n");
+                report.append("Total Fees:      ").append(String.format("%.2f", totalFees)).append("\n");
+                report.append("Total Collected: ").append(String.format("%.2f", totalCollected)).append("\n");
+                report.append("Total Pending:   ").append(String.format("%.2f", totalPending)).append("\n");
+                report.append("\n==============================");
+
+                JOptionPane.showMessageDialog(null, report.toString(), "Summary Report", JOptionPane.INFORMATION_MESSAGE);
+
+            } else {
+                // Mode 2 — Row selected, show Individual Student Report
+                StringBuilder report = new StringBuilder("STUDENT FEE REPORT\n");
+                report.append("==============================\n\n");
+
+                report.append("Name:        ").append(model.getValueAt(selectedRow, 0)).append("\n");
+                report.append("Amount Due:  ").append(model.getValueAt(selectedRow, 1)).append("\n");
+                report.append("Amount Paid: ").append(model.getValueAt(selectedRow, 2)).append("\n");
+                report.append("Due Date:    ").append(model.getValueAt(selectedRow, 3)).append("\n");
+                report.append("Balance:     ").append(model.getValueAt(selectedRow, 4)).append("\n");
+                report.append("Status:      ").append(model.getValueAt(selectedRow, 5)).append("\n");
+                report.append("\n==============================");
+
+                JOptionPane.showMessageDialog(null, report.toString(), "Student Report", JOptionPane.INFORMATION_MESSAGE);
             }
-            JOptionPane.showMessageDialog(null, report.toString());
-        });
+        }); // ✅ this was missing before!
+
     }
 
     private void updateTotalFees(javax.swing.table.DefaultTableModel model) {
@@ -229,8 +259,6 @@ public class FeeManagementForm {
         totalPendingLabel.setText("Total Pending: " + String.format("%.2f", totalPending));
     }
 
-
-
     public static void main(String[] args) {
         JFrame frame = new JFrame("Fee Management System");
         frame.setContentPane(new FeeManagementForm().mainPanel);
@@ -239,6 +267,7 @@ public class FeeManagementForm {
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         frame.setSize(900, 400);
-    }}
+    }
+}
 
 
