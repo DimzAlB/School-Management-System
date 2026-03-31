@@ -9,7 +9,7 @@ public class FeeManagementForm {
     private JButton addRecordButton;
     private JTable feeTable;
     private JButton generateReportButton;
-    private JPanel mainPanel;
+    public JPanel mainPanel;
     private JButton clearButton;
     private JButton deleteRecordButton;
     private JLabel totalFeesLabel;
