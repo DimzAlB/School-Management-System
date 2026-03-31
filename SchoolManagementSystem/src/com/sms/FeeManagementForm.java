@@ -18,8 +18,17 @@ public class FeeManagementForm {
     private JLabel totalCollectedLabel;
     private JLabel totalPendingLabel;
     private JButton updatePaymentButton;
+    private JButton BACKTOMENUButton;
 
     public FeeManagementForm() {
+
+        // Back to Menu button
+        BACKTOMENUButton.addActionListener(e -> {
+            MenuForm menu = new MenuForm();
+            menu.setVisible(true);
+            SwingUtilities.getWindowAncestor(mainPanel).dispose();
+        });
+
 
         // Real-time balance/change calculator
         amountPaidField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
